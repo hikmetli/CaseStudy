@@ -47,6 +47,7 @@ export default function AccountPage() {
                                 <th className="text-left p-4 font-medium text-muted-foreground">Balance</th>
                                 <th className="text-left p-4 font-medium text-muted-foreground">Used ID</th>
                                 <th className="text-left p-4 font-medium text-muted-foreground">Created At</th>
+                                <th className="text-left p-4 font-medium text-muted-foreground">Iban</th>
                                 <th className="text-left p-4 font-medium text-muted-foreground">Edit</th>
                                 <th className="text-left p-4 font-medium text-muted-foreground">Delete</th>
                             </tr>
@@ -67,6 +68,8 @@ export default function AccountPage() {
                                             ? account.createdAt.toDateString()
                                             : new Date(account.createdAt).toDateString()}
                                     </td>
+                                    <td className="p-4">{account.iban}</td>
+
                                     <td className="p-4" onClick={(e) => { e.stopPropagation(); onEdit(account.id); }}>
                                         <AccountEditPopover initialAccount={account} />
                                     </td>

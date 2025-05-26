@@ -18,7 +18,7 @@ import { useLocation, useNavigate } from "react-router";
 
 export default function SignIn() {
 
-    const [login] = useLoginMutation();
+    const [login, { isSuccess }] = useLoginMutation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -30,7 +30,7 @@ export default function SignIn() {
 
     const onSubmit = async (event: SignInSchema) => {
         await login(event);
-
+        if (!isSuccess) return;
         navigate(location.state?.from || '/');
 
     }

@@ -8,5 +8,6 @@ public class AccountDto
     public int UserId { get; set; }
     public required string AccountName { get; set; }
     public decimal Balance { get; set; }
+    public required string Iban { get; set; }
     public DateTime CreatedAt { get; set; }
 }

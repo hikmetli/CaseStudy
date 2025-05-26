@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Extensions;
+using API.Services;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(Context context, SignInManager<AppUser> signInManager) : ControllerBase
+    public class AccountController(Context context, SignInManager<AppUser> signInManager, IbanVerificationService ibanService) : ControllerBase
     {
         [HttpGet]
         public async Task<ActionResult<List<Account>>?> GetAccountList()
@@ -37,6 +38,8 @@ namespace API.Controllers
             var account = await context.Accounts.AccountToDto().Where(x => x.Id == id).FirstOrDefaultAsync();
             if (account == null) return NotFound();
 
+            await ibanService.GetIbanAsync(1);
+
             var user = await GetAccountsUser();
             if (user == null || user.Id != account.UserId) return Unauthorized();
 
@@ -59,15 +62,24 @@ namespace API.Controllers
                 UserId = user.Id,
                 CreatedAt = DateTime.Now,
                 Balance = 0,
-                AccountName = accountDto.AccountName
+                AccountName = accountDto.AccountName,
             };
 
             context.Accounts.Add(acc);
             var result = context.SaveChanges() > 0;
             if (!result) return BadRequest();
 
-            return Ok(acc.ToDto());
+            var iban = await ibanService.CreateIbanAsync(acc.Id);
+            if (iban == null)
+            {
+                return BadRequest("Failed to create IBAN.");
+            }
+            acc.Iban = iban.IbanNumber;
+            context.Accounts.Update(acc);
+            var updateResult = context.SaveChanges() > 0;
+            if (!updateResult) return BadRequest();
 
+            return Ok(acc.ToDto());
         }
 
         [HttpPut]

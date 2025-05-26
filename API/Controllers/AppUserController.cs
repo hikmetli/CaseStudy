@@ -121,5 +121,28 @@ namespace API.Controllers
             return Ok(user);
         }
 
+        [HttpPost("deleteUser")]
+        public async Task<IActionResult> DeleteUser()
+        {
+            // Get the currently logged-in user
+            var user = await signInManager.UserManager.Users
+                .Where(x => x.UserName == User.Identity!.Name)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return Unauthorized("User not found.");
+            }
+
+            // Delete the user
+            var result = await signInManager.UserManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok("User deleted successfully.");
+
+        }
     }
 }

@@ -15,7 +15,8 @@ public static class AccountExtensions
             UserId = acc.UserId,
             AccountName = acc.AccountName,
             CreatedAt = acc.CreatedAt,
-            Balance = acc.Balance
+            Balance = acc.Balance,
+            Iban = acc.Iban ?? ""
         });
     }
 
@@ -27,7 +28,8 @@ public static class AccountExtensions
             UserId = acc.UserId,
             AccountName = acc.AccountName,
             CreatedAt = acc.CreatedAt,
-            Balance = acc.Balance
+            Balance = acc.Balance,
+            Iban = acc.Iban ?? ""
         };
     }
 

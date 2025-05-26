@@ -4,4 +4,5 @@ export type Account = {
     accountName: string
     balance: number
     createdAt: Date
+    iban: string
 }

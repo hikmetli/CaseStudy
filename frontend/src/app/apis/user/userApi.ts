@@ -19,6 +19,7 @@ export const userApi = createApi({
                 try {
                     await queryFulfilled;
                     dispatch(userApi.util.invalidateTags(["UserInfo"]));
+                    router.navigate('/');
                 }
                 catch (error) {
                     console.log(error);
@@ -30,11 +31,37 @@ export const userApi = createApi({
                 url: "/account/register",
                 method: "POST",
                 body
-            })
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(userApi.util.invalidateTags(["UserInfo"]));
+                    router.navigate('/');
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            }
         }),
         logout: builder.mutation({
             query: () => ({
                 url: 'account/logout',
+                method: 'POST'
+            }),
+            async onQueryStarted(_, { dispatch, queryFulfilled }) {
+                try {
+                    await queryFulfilled;
+                    dispatch(userApi.util.invalidateTags(["UserInfo"]));
+                    router.navigate('/');
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            }
+        }),
+        deleteUser: builder.mutation({
+            query: () => ({
+                url: 'account/deleteUser',
                 method: 'POST'
             }),
             async onQueryStarted(_, { dispatch, queryFulfilled }) {

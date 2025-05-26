@@ -1,6 +1,7 @@
 using API.DataAccess;
 using API.Entity;
 using API.Middlewares;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,8 @@ builder.Services.AddIdentityApiEndpoints<AppUser>(opt =>
 
 
 builder.Services.AddTransient<ExceptionMiddleware>();
+// builder.Services.AddScoped<IbanVerificationService>();
+builder.Services.AddHttpClient<IbanVerificationService>();
 
 // builder.Services.AddScoped<ISampleDal, EfSampleDal>();
 // builder.Services.AddScoped<ISampleService, SampleManager>();
