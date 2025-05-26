@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using API.DataAccess;
 using API.Dto.Transfer;
 using API.Entity;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TransferController(Context context, SignInManager<AppUser> signInManager) : ControllerBase
+    public class TransferController(Context context, SignInManager<AppUser> signInManager, IbanVerificationService ibanSevice) : ControllerBase
     {
 
         [HttpGet]
@@ -107,12 +108,93 @@ namespace API.Controllers
             context.Accounts.Update(sender);
             context.Accounts.Update(reciever);
 
+            if (sender.UserId != reciever.UserId)
+            {
+                var transaction = new Transaction
+                {
+                    UserId = sender.UserId,
+                    Amount = transferDto.Amount,
+                    Date = transferDto.Date ?? DateTime.Now,
+                    Description = transferDto.Description,
+                    CategoryId = context.Category.FirstOrDefault(c => c.Name == "Transfer")?.Id ?? 1
+                };
+                context.Transactions.Add(transaction);
+
+
+            }
+
             var result = context.SaveChanges() > 0;
             if (!result) return BadRequest();
 
             return Ok(transfer);
 
         }
+
+
+        [HttpPost("with-iban")]
+        public async Task<ActionResult<Transfer>> CreateTransferWithIban(TransferWithIbanDto transferDto)
+        {
+            var account = await ibanSevice.VerifyIbanAsync(transferDto.RecipientAccountIban);
+
+            if (account == null) return BadRequest("Invalid IBAN");
+
+            var returnTuple = await GetPair(transferDto.SenderAccountId, account.AccountId);
+
+            var sender = returnTuple.Item1;
+            var reciever = returnTuple.Item2;
+
+            var t_err = IsAvailableTransferPair(sender, reciever, transferDto.Amount);
+
+            if (!t_err.Item1) return BadRequest(t_err.Item2);
+
+            if (!await IsSenderAuthorized(transferDto.SenderAccountId)) return Unauthorized();
+
+
+
+            var transfer = new Transfer
+            {
+                SenderAccountId = transferDto.SenderAccountId,
+                RecipientAccountId = account.AccountId,
+                Amount = transferDto.Amount,
+                Date = transferDto.Date ?? DateTime.Now,
+                Description = transferDto.Description
+            };
+
+
+            // if transfer happens between different users, make a transaction to creator
+
+            sender.Balance -= transferDto.Amount;
+            reciever.Balance += transferDto.Amount;
+
+
+            context.Transfers.Add(transfer);
+            context.Accounts.Update(sender);
+            context.Accounts.Update(reciever);
+
+            if (sender.UserId != reciever.UserId)
+            {
+                var transaction = new Transaction
+                {
+                    UserId = sender.UserId,
+                    Amount = transferDto.Amount,
+                    Date = transferDto.Date ?? DateTime.Now,
+                    Description = transferDto.Description,
+                    CategoryId = context.Category.FirstOrDefault(c => c.Name == "Transfer")?.Id ?? 1
+                };
+                context.Transactions.Add(transaction);
+
+
+            }
+
+
+            var result = context.SaveChanges() > 0;
+            if (!result) return BadRequest();
+
+
+            return Ok(transfer);
+
+        }
+
 
         [HttpPut]
         public async Task<ActionResult<Transfer>> UpdateTransfer(Transfer updateTransfer)

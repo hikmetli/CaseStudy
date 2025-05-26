@@ -84,6 +84,13 @@ public class DbInitializer
             };
             await context.Category.AddAsync(other);
 
+            var transfer = new Category
+            {
+                Name = "Transfer"
+            };
+            await context.Category.AddAsync(other);
+
+
         }
 
 

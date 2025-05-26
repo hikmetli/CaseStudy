@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../baseApi";
 import type { Transfer } from "../../models/transfer";
-import type { CreateTransferSchema } from "@/schemas/transferFormSchema";
+import type { TransferWithIbanSchema, TransferWithIdSchema } from "@/schemas/transferFormSchema";
 
 
 export const transferApi = createApi({
@@ -54,7 +54,7 @@ export const transferApi = createApi({
             }
 
         }),
-        createTransfer: builder.mutation<Transfer, CreateTransferSchema>({
+        createTransfer: builder.mutation<Transfer, TransferWithIdSchema>({
             query: (transfer) => ({
                 url: `/transfer`,
                 method: "POST",
@@ -69,8 +69,23 @@ export const transferApi = createApi({
                     console.log(error);
                 }
             }
+        }),
+        createTransferWithIban: builder.mutation<Transfer, TransferWithIbanSchema>({
+            query: (transfer) => ({
+                url: `/transfer/with-iban`,
+                method: "POST",
+                body: transfer
+            }),
+            onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                    dispatch(transferApi.util.invalidateTags(["Transfer"]));
+                } catch (error) {
+                    console.log(error);
+                }
+            }
         })
     })
 })
 
-export const { useGetAllTransfersQuery, useLazyGetAllTransfersQuery, useGetTransferQuery, useDeleteTransferMutation, useUpdateTransferMutation, useCreateTransferMutation } = transferApi;
+export const { useGetAllTransfersQuery, useLazyGetAllTransfersQuery, useGetTransferQuery, useDeleteTransferMutation, useUpdateTransferMutation, useCreateTransferMutation, useCreateTransferWithIbanMutation } = transferApi;

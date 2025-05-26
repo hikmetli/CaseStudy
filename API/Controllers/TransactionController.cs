@@ -33,6 +33,50 @@ namespace API.Controllers
             return Ok(transactions);
         }
 
+        [HttpGet("summary")]
+        public async Task<ActionResult<List<TransactionDto>>?> GetTransactionSummary([FromQuery] TransactionParams transactionParams)
+        {
+            var user = await GetTransactionsUser();
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            // Get the past 7 days' transactions for the user
+            var sevenDaysAgo = DateTime.Now.Date.AddDays(-7);
+            var transactions = await context.Transactions
+                .Where(t => t.UserId == user.Id && t.Date >= sevenDaysAgo)
+                .ToListAsync();
+
+
+            if (transactions == null)
+            {
+                transactions = [];
+            }
+
+            // past 7 days
+            var past7Days = Enumerable.Range(0, 7)
+                .Select(i => DateTime.Now.Date.AddDays(-i))
+                .ToList();
+
+            // Group transactions by date and calculate daily totals
+            var groupedTransactions = transactions
+                .GroupBy(t => t.Date.Date) // Group by date (ignoring time)
+                .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+
+            // Fill in missing days with 0 total
+            var dailySummary = past7Days
+                .Select(date => new DailyTransactionSummaryDto
+                {
+                    Date = date,
+                    TotalAmount = groupedTransactions.ContainsKey(date) ? groupedTransactions[date] : 0
+                })
+                .OrderBy(summary => summary.Date) // Order by date
+                .ToList();
+
+            return Ok(dailySummary);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<TransactionDto>> GetTransactionDetails(int id)
         {

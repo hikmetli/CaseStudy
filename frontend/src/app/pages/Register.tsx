@@ -88,7 +88,7 @@ export default function Register() {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Password" {...field} />
+                                        <Input type="password" placeholder="Password" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -101,7 +101,7 @@ export default function Register() {
                                 <FormItem>
                                     <FormLabel>Password Validation</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Password Validation" {...field} />
+                                        <Input type="password" placeholder="Password Validation" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

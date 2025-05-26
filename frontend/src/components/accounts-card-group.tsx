@@ -2,21 +2,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { ExternalLink } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useGetAllAccountsQuery } from "@/app/apis/account/accountApi"
 
-type Account = {
-    id: number;
-    accountName: string;
-    balance: number;
-    currency: string;
-}
-
-const sampleAccounts: Account[] = [
-    { id: 1, accountName: "Main Account", balance: 5240.50, currency: "USD" },
-    { id: 2, accountName: "Savings", balance: 12350.75, currency: "USD" },
-    { id: 3, accountName: "Investment", balance: 8420.25, currency: "USD" },
-];
 
 export default function AccountsCardGroup() {
+    const { data } = useGetAllAccountsQuery();
+
     return (
         <div className="mt-6">
             <div className="flex justify-between items-center mb-4">
@@ -30,7 +21,7 @@ export default function AccountsCardGroup() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {sampleAccounts.map((account) => (
+                {data && data?.length > 0 ? data.slice(0, 3).map((account) => (
                     <Card key={account.id} className="hover:bg-accent transition-colors">
                         <CardHeader>
                             <CardTitle className="text-lg">{account.accountName}</CardTitle>
@@ -40,12 +31,26 @@ export default function AccountsCardGroup() {
                             <p className="text-2xl font-bold">
                                 {new Intl.NumberFormat('en-US', {
                                     style: 'currency',
-                                    currency: account.currency
+                                    currency: "USD"
                                 }).format(account.balance)}
                             </p>
                         </CardContent>
                     </Card>
-                ))}
+                )) : (
+                    <Link to="/accounts" className="flex items-center gap-2">
+                        <Card className="hover:bg-accent transition-colors">
+                            <CardHeader>
+                                <CardTitle className="text-lg">There Is No Account</CardTitle>
+                                <CardDescription>Account #</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-xl font-bold">
+                                    Create One!
+                                </p>
+                            </CardContent>
+                        </Card>
+                    </Link>
+                )}
             </div>
         </div>
     )

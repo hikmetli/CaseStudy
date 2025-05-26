@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../baseApi";
-import type { Transaction, TransactionParams, TransactionUpdateModel } from "../../models/transaction";
+import type { Transaction, TransactionParams, TransactionSummary, TransactionUpdateModel } from "../../models/transaction";
 import type { CreateTransactionSchema } from "@/schemas/transactionFormSchema";
 import { filterEmptyValues } from "@/lib/utils";
 
@@ -16,6 +16,13 @@ export const transactionApi = createApi({
                 method: 'GET',
                 params: filterEmptyValues(params)
 
+            }),
+            providesTags: ["Transaction"]
+        }),
+        getTransactionSummary: builder.query<TransactionSummary[], void>({
+            query: () => ({
+                url: "/transaction/summary",
+                method: 'GET'
             }),
             providesTags: ["Transaction"]
         }),
@@ -76,4 +83,4 @@ export const transactionApi = createApi({
     })
 })
 
-export const { useGetAllTransactionsQuery, useLazyGetAllTransactionsQuery, useGetTransactionQuery, useDeleteTransactionMutation, useUpdateTransactionMutation, useCreateTransactionMutation } = transactionApi;
+export const { useGetAllTransactionsQuery, useLazyGetAllTransactionsQuery, useGetTransactionQuery, useDeleteTransactionMutation, useUpdateTransactionMutation, useCreateTransactionMutation, useGetTransactionSummaryQuery } = transactionApi;

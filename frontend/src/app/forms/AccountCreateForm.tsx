@@ -41,6 +41,13 @@ export default function AccountCreateForm() {
                     <p className="text-sm text-destructive">{errors.accountName.message}</p>
                 )}
             </div>
+            <div className="space-y-2">
+                <Label htmlFor="Balance">Account Balance</Label>
+                <Input id="balance" {...register("balance", { valueAsNumber: true })} />
+                {errors.balance && (
+                    <p className="text-sm text-destructive">{errors.balance.message}</p>
+                )}
+            </div>
 
             <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Creating..." : "Create"}

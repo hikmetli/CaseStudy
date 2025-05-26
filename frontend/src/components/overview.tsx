@@ -5,16 +5,17 @@ import TransferStatus from "./transfer-status";
 import { Button } from "./ui/button";
 import { Link } from "react-router";
 import { ExternalLink } from "lucide-react";
+import { useGetTransactionSummaryQuery } from "@/app/apis/transaction/transactionApi";
 
-const data = [
-    { date: '2024-03-01', amount: 1200 },
-    { date: '2024-03-02', amount: 2100 },
-    { date: '2024-03-03', amount: 1800 },
-    { date: '2024-03-04', amount: 2400 },
-    { date: '2024-03-05', amount: 2000 },
-    { date: '2024-03-06', amount: 3100 },
-    { date: '2024-03-07', amount: 2800 },
-];
+// const data = [
+//     { date: '2024-03-01', amount: 1200 },
+//     { date: '2024-03-02', amount: 2100 },
+//     { date: '2024-03-03', amount: 1800 },
+//     { date: '2024-03-04', amount: 2400 },
+//     { date: '2024-03-05', amount: 2000 },
+//     { date: '2024-03-06', amount: 3100 },
+//     { date: '2024-03-07', amount: 2800 },
+// ];
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -33,6 +34,8 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function Overview() {
+    const { data } = useGetTransactionSummaryQuery();
+
     return (
         <>
             <div className="flex justify-between items-center mb-4">
@@ -75,7 +78,7 @@ export default function Overview() {
                                 />
                                 <Line
                                     type="monotone"
-                                    dataKey="amount"
+                                    dataKey="totalAmount"
                                     strokeWidth={2}
 
                                 />

@@ -61,7 +61,10 @@ export default function AccountPage() {
                                 >
                                     <td className="p-4">{account.id}</td>
                                     <td className="p-4">{account.accountName}</td>
-                                    <td className="p-4">{account.balance}</td>
+                                    <td className="p-4">{new Intl.NumberFormat('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD'
+                                    }).format(account.balance)}</td>
                                     <td className="p-4">{account.userId}</td>
                                     <td className="p-4">
                                         {account.createdAt instanceof Date

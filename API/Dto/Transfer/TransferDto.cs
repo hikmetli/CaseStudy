@@ -10,3 +10,12 @@ public class TransferDto
     public DateTime? Date { get; set; }
     public string Description { get; set; }
 }
+
+public class TransferWithIbanDto
+{
+    public int SenderAccountId { get; set; }
+    public required string RecipientAccountIban { get; set; }
+    public decimal Amount { get; set; }
+    public DateTime? Date { get; set; }
+    public string Description { get; set; }
+}

@@ -16,8 +16,8 @@ public class IbanVerificationService(HttpClient httpClient, IConfiguration confi
             throw new ArgumentException("IBAN cannot be null or empty.", nameof(iban));
         }
 
-        var response = await httpClient.GetAsync($"{IbanBase}/verify/{iban}");
-        response.EnsureSuccessStatusCode();
+        var response = await httpClient.PostAsJsonAsync($"{IbanBase}/iban/verify", new { Iban = iban });
+        if (!response.IsSuccessStatusCode) return null;
 
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<IbanVerificationDto>(content,
@@ -37,7 +37,7 @@ public class IbanVerificationService(HttpClient httpClient, IConfiguration confi
 
 
         var response = await httpClient.PostAsJsonAsync($"{IbanBase}/iban/create", new IbanCreateDto { AccountId = acc_id });
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode) return null;
 
 
         var content = await response.Content.ReadAsStringAsync();
@@ -52,7 +52,7 @@ public class IbanVerificationService(HttpClient httpClient, IConfiguration confi
         var IbanBase = configuration["IbanVerifier:IbanUrl"];
 
         var response = await httpClient.GetAsync($"{IbanBase}/iban?AccountId={id}");
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode) return null;
 
         var content = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<Iban>(content,

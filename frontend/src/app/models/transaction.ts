@@ -23,3 +23,8 @@ export type TransactionParams = {
     dateTo: string
 
 }
+
+export type TransactionSummary = {
+    date: Date,
+    totalAmoun: number,
+}

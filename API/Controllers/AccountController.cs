@@ -61,7 +61,7 @@ namespace API.Controllers
             {
                 UserId = user.Id,
                 CreatedAt = DateTime.Now,
-                Balance = 0,
+                Balance = accountDto.Balance ?? 0,
                 AccountName = accountDto.AccountName,
             };
 
