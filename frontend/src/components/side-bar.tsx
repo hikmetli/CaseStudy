@@ -47,7 +47,7 @@ export default function UserDashboardLayout() {
                 <main className="ml-64 flex-1 p-6">
                     <div className="mx-auto max-w-4xl">
                         {activeTab === "overview" && (
-                            <Overview></Overview>
+                            <Overview />
                         )}
 
                         {activeTab === "edit" && (

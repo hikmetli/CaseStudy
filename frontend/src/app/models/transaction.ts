@@ -14,3 +14,12 @@ export type TransactionUpdateModel = {
     date: Date
     categoryId: number
 }
+
+export type TransactionParams = {
+    orderby: string,
+    searchTerm: string,
+    categories: string[],
+    dateFrom: string,
+    dateTo: string
+
+}

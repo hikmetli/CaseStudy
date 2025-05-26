@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Extensions;
+using API.RequestHelpers;
 
 
 namespace API.Controllers
@@ -15,7 +16,7 @@ namespace API.Controllers
     {
 
         [HttpGet]
-        public async Task<ActionResult<List<TransactionDto>>?> GetTransactionList()
+        public async Task<ActionResult<List<TransactionDto>>?> GetTransactionList([FromQuery] TransactionParams transactionParams)
         {
             var user = await GetTransactionsUser();
             if (user == null)
@@ -23,7 +24,7 @@ namespace API.Controllers
                 return Unauthorized();
             }
 
-            var transactions = await context.Transactions.Where(a => a.UserId == user.Id).TransactionToDto().ToListAsync();
+            var transactions = await context.Transactions.Where(a => a.UserId == user.Id).Filter(transactionParams.Categories, transactionParams.DateFrom, transactionParams.DateTo).Search(transactionParams.SearchTerm).Sort(transactionParams.OrderBy).TransactionToDto().ToListAsync();
             if (transactions == null)
             {
                 return NotFound();

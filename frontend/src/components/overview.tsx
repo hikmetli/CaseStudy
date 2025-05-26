@@ -38,7 +38,7 @@ export default function Overview() {
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold tracking-tight">Transactions</h2>
                 <Button variant="ghost" size="sm" asChild>
-                    <Link to="/transfers" className="flex items-center gap-2">
+                    <Link to="/transactions" className="flex items-center gap-2">
                         View All
                         <ExternalLink className="h-4 w-4" />
                     </Link>

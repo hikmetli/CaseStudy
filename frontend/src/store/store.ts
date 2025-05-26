@@ -8,6 +8,7 @@ import { accountApi } from '@/app/apis/account/accountApi';
 import { transactionApi } from '@/app/apis/transaction/transactionApi';
 import { categoryApi } from '@/app/apis/category/categoryApi';
 import { transferApi } from '@/app/apis/transfer/transferApi';
+import { transactionSlice } from '@/app/slices/transactionSlice';
 
 export const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
         [transferApi.reducerPath]: transferApi.reducer,
 
         [errorApi.reducerPath]: errorApi.reducer,
-        ui: uiSlice.reducer
+        ui: uiSlice.reducer,
+        pTransaction: transactionSlice.reducer
     },
     middleware: (getDefaultMiddleware) => (
         getDefaultMiddleware().concat(
